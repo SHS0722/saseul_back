@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserRepository } from './user.repository';
 import { TypeOrmExModule } from 'src/core/typeorm-ex.module';
 import { JwtStrategy } from './jwt.strategy';
+import { SubscriptionRepository } from 'src/subscription/subscription.repository';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { JwtStrategy } from './jwt.strategy';
         expiresIn: 600 * 60,
       }
     }),
-    TypeOrmExModule.forCustomRepository([UserRepository])
+    TypeOrmExModule.forCustomRepository([UserRepository,SubscriptionRepository])
   ],
   controllers: [UserController],
   providers: [UserService,JwtStrategy],

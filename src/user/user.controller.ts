@@ -23,7 +23,8 @@ export class UserController {
 
     @Post('/check')
     @UseAuthGuard()
-    check(@AuthUser()user: User){
+    async check(@AuthUser()user: User){
+        await this.userService.checkSub(user);
         return user;
     }
 }

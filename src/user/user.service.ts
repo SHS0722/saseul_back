@@ -4,12 +4,15 @@ import { CreateUserDTO, LoginDTO } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
 import DateUtils from 'src/utils/date-util';
 import { JwtService } from '@nestjs/jwt';
+import { SubscriptionRepository } from 'src/subscription/subscription.repository';
+import { User } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
 
     constructor(
         private userRepository: UserRepository,
+        private subscriptionRepository: SubscriptionRepository,
         private jwtService: JwtService
     ){};
 
@@ -33,12 +36,12 @@ export class UserService {
 
         await this.userRepository.createUser(createUserDTO);
 
-        const accessToken = await this.jwtService.sign({ user_email },{
-            secret: process.env.JWT_SCRET_KEY,
-            expiresIn: '30d'
-        })
+        // const accessToken = await this.jwtService.sign({ user_email },{
+        //     secret: process.env.JWT_SCRET_KEY,
+        //     expiresIn: '30d'
+        // })
 
-        return accessToken;
+        throw new ConflictException('가입 완료. 결제 대기 중입니다.');
     }
 
     async login(loginDTO: LoginDTO){
@@ -47,6 +50,14 @@ export class UserService {
         const user = await this.userRepository.getUserById(user_email);
 
         if(user && await bcrypt.compare(user_pw, user.user_pw)){
+            const sub = await this.subscriptionRepository.getOneByEmail(user.user_id);
+            if(!sub){
+                throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
+            }
+            const today = DateUtils.momentDate();
+            if(sub.end_date < today){
+                throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
+            }
             const accessToken = await this.jwtService.sign({ user_email },{
                 secret: process.env.JWT_SCRET_KEY,
                 expiresIn: '30d'
@@ -54,6 +65,17 @@ export class UserService {
             return accessToken;
         }else{
             throw new ConflictException('로그인에 실패하였습니다.');
+        }
+    }
+
+    async checkSub(user: User){
+        const sub = await this.subscriptionRepository.getOneByEmail(user.user_id);
+        if(!sub){
+            throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
+        }
+        const today = DateUtils.momentDate();
+        if(sub.end_date < today){
+            throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
         }
     }
 }
