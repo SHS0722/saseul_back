@@ -25,9 +25,9 @@ export class UserController {
 
     @Post('/check')
     @UseAuthGuard()
-    async check(@AuthUser()user: User, @Body()request: {ip:string},@Req()req: Request){
+    async check(@AuthUser()user: User,@Ip()ip: any){
 
-        await this.userService.checkSub(user);
+        await this.userService.checkSub(user,ip);
         return user;
     }
 

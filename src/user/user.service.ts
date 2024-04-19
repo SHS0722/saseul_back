@@ -64,6 +64,8 @@ export class UserService {
             const ip_check = await this.ipRepository.check(user,ip);
             if(!ip_check){
                 throw new ConflictException('접속이 불가능한 IP입니다.');
+            }else if(ip_check.ip !== ip){
+                throw new ConflictException('접속이 불가능한 IP입니다.');
             }
             const accessToken = await this.jwtService.sign({ user_email },{
                 secret: process.env.JWT_SCRET_KEY,
@@ -75,7 +77,7 @@ export class UserService {
         }
     }
 
-    async checkSub(user: User){
+    async checkSub(user: User,ip: string){
         const sub = await this.subscriptionRepository.getOneByEmail(user.user_id);
         if(!sub){
             throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
@@ -83,6 +85,12 @@ export class UserService {
         const today = DateUtils.momentDate();
         if(sub.end_date < today){
             throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
+        }
+        const ip_check = await this.ipRepository.check(user,ip);
+        if(!ip_check){
+            throw new ConflictException('접속이 불가능한 IP입니다.');
+        }else if(ip_check.ip !== ip){
+            throw new ConflictException('접속이 불가능한 IP입니다.');
         }
     }
 
