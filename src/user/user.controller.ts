@@ -19,7 +19,7 @@ export class UserController {
 
     @Post('/login')
     login(@Body(ValidationPipe)loginDTO: LoginDTO,@Ip()ip: any){
-        console.log(ip)
+        loginDTO.ip = ip;
         return this.userService.login(loginDTO);
     }
 

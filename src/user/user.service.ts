@@ -64,8 +64,6 @@ export class UserService {
             const ip_check = await this.ipRepository.check(user,ip);
             if(!ip_check){
                 throw new ConflictException('접속이 불가능한 IP입니다.');
-            }else if(ip_check.ip !== ip){
-                throw new ConflictException('접속이 불가능한 IP입니다.');
             }
             const accessToken = await this.jwtService.sign({ user_email },{
                 secret: process.env.JWT_SCRET_KEY,
@@ -87,10 +85,7 @@ export class UserService {
             throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
         }
         const ip_check = await this.ipRepository.check(user,ip);
-        console.log(ip_check.ip)
         if(!ip_check){
-            throw new ConflictException('접속이 불가능한 IP입니다.');
-        }else if(ip_check.ip !== ip){
             throw new ConflictException('접속이 불가능한 IP입니다.');
         }
     }
