@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { IpModule } from './ip/ip.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { SubscriptionModule } from './subscription/subscription.module';
       synchronize: true
   }),
     UserModule,
-    SubscriptionModule],
+    SubscriptionModule,
+    IpModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -33,4 +33,6 @@ export class LoginDTO {
     @MaxLength(20)
     @IsNotEmpty()
     user_pw: string;
+
+    ip: string;
 }

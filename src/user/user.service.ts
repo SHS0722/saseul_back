@@ -6,6 +6,8 @@ import DateUtils from 'src/utils/date-util';
 import { JwtService } from '@nestjs/jwt';
 import { SubscriptionRepository } from 'src/subscription/subscription.repository';
 import { User } from './entity/user.entity';
+import { GetUserQuery } from './dto/get_users.dto';
+import { IPRepository } from 'src/ip/ip.repository';
 
 @Injectable()
 export class UserService {
@@ -13,7 +15,8 @@ export class UserService {
     constructor(
         private userRepository: UserRepository,
         private subscriptionRepository: SubscriptionRepository,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private ipRepository: IPRepository
     ){};
 
     async createUser(createUserDTO: CreateUserDTO){
@@ -45,7 +48,7 @@ export class UserService {
     }
 
     async login(loginDTO: LoginDTO){
-        const { user_email, user_pw } = loginDTO;
+        const { user_email, user_pw, ip } = loginDTO;
 
         const user = await this.userRepository.getUserById(user_email);
 
@@ -57,6 +60,10 @@ export class UserService {
             const today = DateUtils.momentDate();
             if(sub.end_date < today){
                 throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
+            }
+            const ip_check = await this.ipRepository.check(user,ip);
+            if(!ip_check){
+                throw new ConflictException('접속이 불가능한 IP입니다.');
             }
             const accessToken = await this.jwtService.sign({ user_email },{
                 secret: process.env.JWT_SCRET_KEY,
@@ -77,5 +84,9 @@ export class UserService {
         if(sub.end_date < today){
             throw new ConflictException('이번 달 이용 요금을 결제해주세요.');    
         }
+    }
+
+    getUser(param: GetUserQuery){
+        return this.userRepository.getUser(param);
     }
 }

@@ -1,3 +1,4 @@
+import { IP } from "src/ip/entity/ip.entity";
 import { Subscription } from "src/subscription/entity/subscription.entity";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
@@ -24,4 +25,7 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Subscription, subscription => subscription.user,{eager: false})
     subscription: Subscription;
+
+    @OneToMany(() => IP, ip => ip.user,{eager: false})
+    ip: IP;
 }
