@@ -6,7 +6,11 @@ import { User } from "src/user/entity/user.entity";
 @CustomRepository(IP)
 export class IPRepository extends Repository<IP> {
     async check(user: User, ip: string){
-        const myip = await this.findOne({ where : { user , ip} });
+        const myip = await this
+        .createQueryBuilder('ip') // myEntity는 테이블의 별칭입니다.
+        .where('ip.user = :user', { user }) // user 조건 설정
+        .andWhere('ip.ip = :ip', { ip }) // ip 조건 설정
+        .getOne(); 
 
         return myip;
     }
