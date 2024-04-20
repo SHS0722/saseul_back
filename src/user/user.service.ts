@@ -90,7 +90,12 @@ export class UserService {
         }
     }
 
-    getUser(param: GetUserQuery){
+    async getUser(param: GetUserQuery){
+        const res: any = await this.userRepository.getUser(param);
         return this.userRepository.getUser(param);
+    }
+
+    async getUserById(user_id: number){
+        return this.userRepository.getUserByUserId(user_id)
     }
 }

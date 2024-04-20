@@ -35,4 +35,9 @@ export class UserController {
     async getUser(@Query()param: GetUserQuery){
         return this.userService.getUser(param);
     }
+
+    @Get('/:user_id')
+    getUserById(@Param('user_id')user_id: number){
+        return this.userService.getUserById(user_id);
+    }
 }

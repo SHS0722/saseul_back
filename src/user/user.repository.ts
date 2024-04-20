@@ -13,6 +13,11 @@ export class UserRepository extends Repository<User> {
         return user;
     }
 
+    async getUserByUserId(user_id:number){
+        const user = await this.findOne({where:{user_id}});
+        return user;
+    }
+
     async getUserByPhone(user_phone: string): Promise<User> {
         const user = await this.findOne({ where : { user_phone} });
 
@@ -36,20 +41,23 @@ export class UserRepository extends Repository<User> {
 
     async getUser(param: GetUserQuery){
         const { page, search } = param;
-        const query = this.createQueryBuilder('user').orderBy('user.join_date');
+        const query = this.createQueryBuilder('user').leftJoinAndSelect('user.subscription', 'subscription').orderBy('user.join_date').orderBy('subscription.subscription_id', 'DESC');;
         if(search !== ''){
             query.andWhere('user.user_name LIKE :user_name', {user_name: `%${search}%`})
                  .orWhere('user.user_email LIKE :user_email', {user_email: `%${search}%`})
         }
         query.orderBy('user.join_date', 'DESC'); 
         const count = await query.getCount();
+        const size = 10;
+        const skip = (page - 1) * size;
+        query.skip(skip).take(size);
 
-        const skip = (page - 1) * 10;
-        query.skip(skip).take(10);
-
-        const totalPages = Math.ceil(count / 10);
+        const totalPages = Math.ceil(count / size);
         const users = await query.getMany();
-
-        return {users , totalPages};
+        const data = {
+            users,
+            totalPages
+        }
+        return data;
     }
 }
