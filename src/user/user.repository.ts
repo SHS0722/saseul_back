@@ -60,4 +60,9 @@ export class UserRepository extends Repository<User> {
         }
         return data;
     }
+
+    async deleteUser(user_id: number){
+        await this.delete({user_id});
+        return user_id;
+    }
 }

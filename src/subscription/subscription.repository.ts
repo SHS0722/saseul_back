@@ -42,6 +42,11 @@ export class SubscriptionRepository extends Repository<Subscription> {
         return subscription_id;
     }
 
+    async deleteSubByUser(user: User) {
+        await this.delete({user});
+        return true;
+    }
+
     async updateSub(subscriptionDTO: SubscriptionDTO,subscription_id: number){
         const { user, start_date, end_date, subscription_date} = subscriptionDTO;
         await this.update(subscription_id,{ user, start_date, end_date, subscription_date});

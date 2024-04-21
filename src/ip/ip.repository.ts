@@ -59,6 +59,11 @@ export class IPRepository extends Repository<IP> {
         return ip_id;
     }
 
+    async deleteIPByUser(user: User){
+        await this.delete({user})
+        return true;
+    }
+
     async updateIP(ip_id: number, ipDTO: IPDTO,user: User){
         const this_ip = await this.checkById(user,ip_id)
         if(!this_ip){

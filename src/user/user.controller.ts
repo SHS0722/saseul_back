@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Ip, Param, Post, Query, Req, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Ip, Param, Post, Query, Req, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO, LoginDTO } from './dto/user.dto';
 import UseAuthGuard from './auth-guards/user-auth';
@@ -39,5 +39,10 @@ export class UserController {
     @Get('/:user_id')
     getUserById(@Param('user_id')user_id: number){
         return this.userService.getUserById(user_id);
+    }
+
+    @Delete('/:user_id')
+    deleteUser(@Param('user_id')user_id: number) {
+        return this.userService.deleteUser(user_id);
     }
 }

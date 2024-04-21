@@ -98,4 +98,11 @@ export class UserService {
     async getUserById(user_id: number){
         return this.userRepository.getUserByUserId(user_id)
     }
+
+    async deleteUser(user_id:number){
+        const user = await this.userRepository.getUserByUserId(user_id);
+        await this.subscriptionRepository.deleteSubByUser(user);
+        await this.ipRepository.deleteIPByUser(user)
+        return this.userRepository.deleteUser(user_id);
+    }
 }
