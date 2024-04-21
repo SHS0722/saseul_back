@@ -23,8 +23,6 @@ export class User extends BaseEntity {
     @Column()
     join_date: string;
 
-    @Column()
-    miner: string;
 
     @OneToMany(() => Subscription, subscription => subscription.user,{eager: false})
     subscription: Subscription;
