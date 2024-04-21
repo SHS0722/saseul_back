@@ -18,6 +18,9 @@ export class CreateUserDTO {
     @IsString()
     user_name: string;
 
+    @IsString()
+    miner: string;
+
     join_date: string;
 
 
